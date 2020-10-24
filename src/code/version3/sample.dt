@@ -1,0 +1,8 @@
+Training set: iris.dta, Dimensions: 4, Categories: 3
+
+Root Hyperplane: Left = [37,0,0], Right = [0,35,36]
+1.000000 x[3] + -24.500000 = 0
+
+r Hyperplane: Left = [0,35,1], Right = [0,0,35]
+47.180275 x[1] + 3.340286 x[2] + -45.671246 x[3] + -54.839176 x[4] + 15.776121 = 0
+

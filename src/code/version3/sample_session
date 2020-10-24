@@ -1,0 +1,300 @@
+
+# Each command in the session below is preceded by a hashed comment.
+# For more detailed descriptions of individual commands, see "*readme" files.
+# The user inputs are preceded by a $ sign. Immediately following the user
+# inputs are the system outputs.
+
+----------------------------------------------
+# To compile everything, type 
+$ make mktree
+$ make gendata
+$ make display
+
+----------------------------------------------
+# The following is the simplest use of mktree.
+# It Induces a decision tree for the dataset linear.train, and stores it.
+# The decision trees induced by mktree are always written to files.
+# When cross validation is used, only the tree for the first fold is 
+# written to a file. The default file names are <training data>.dt 
+# for the pruned file and <training data>.dt.unpruned
+# for the unpruned file. If pruning is set off (-p0) or if it is not
+# possible to prune, the unpruned tree is written to <training data>.dt.
+# Note that every run of MKTREE produces a log file (default name = oc1.log)
+# in which all the parameter settings used for that run are written.
+
+$ mktree -tlinear.train
+
+Unpruned decision tree written to linear.train.dt.
+acc. on training set = 100.00	#leaves = 2	max depth = 1
+
+----------------------------------------------
+# The next command chooses 48 points randomly out of the file 
+# linear.train, induces a decision tree for them, and computes the 
+# classification accuracy of that tree on the rest of the points 
+# in the file. As the pruning portion is specified as -p0, no pruning is
+# done. The output is in "very verbose" mode, as the -v option is specified
+# more than once. The decision trees, as usual, are written to files.
+
+$ mktree -tlinear.train -n48 -p0 -v -v
+
+48 training examples loaded from linear.train.
+32 testing examples loaded from linear.train.
+Attributes = 2, Classes = 2
+ Restart 1: Initial Impurity = 6.484
+	hill climbing for coeff. 1. impurity 6.484 -> 6.484
+	hill climbing for coeff. 2. impurity 6.484 -> 6.484
+	hill climbing for coeff. 1. impurity 6.484 -> 6.484
+	hill climbing for coeff. 2. impurity 6.484 -> 6.484
+	hill climbing for coeff. 1. impurity 6.484 -> 6.484
+	hill climbing for coeff. 2. impurity 6.484 -> 6.484
+	hill climbing for coeff. 1. impurity 6.484 -> 6.484
+	hill climbing for coeff. 2. impurity 6.484 -> 6.484
+	hill climbing for coeff. 1. impurity 6.484 -> 6.484
+	hill climbing for coeff. 2. impurity 6.484 -> 6.484
+	hill climbing for coeff. 1. impurity 6.484 -> 6.484
+	hill climbing for coeff. 2. impurity 6.484 -> 6.261
+	hill climbing for coeff. 1. impurity 6.261 -> 5.359
+	hill climbing for coeff. 2. impurity 5.359 -> 5.299
+	hill climbing for coeff. 1. impurity 5.299 -> 4.485
+	hill climbing for coeff. 2. impurity 4.485 -> 4.480
+	hill climbing for coeff. 1. impurity 4.480 -> 4.480
+	hill climbing for coeff. 2. impurity 4.480 -> 4.480
+	hill climbing for coeff. 1. impurity 4.480 -> 4.480
+	hill climbing for coeff. 2. impurity 4.480 -> 4.480
+	hill climbing for coeff. 1. impurity 4.480 -> 4.480
+	hill climbing for coeff. 2. impurity 4.480 -> 4.480
+	hill climbing for coeff. 1. impurity 4.480 -> 4.480
+	hill climbing for coeff. 2. impurity 4.480 -> 4.480
+	hill climbing for coeff. 1. impurity 4.480 -> 4.480
+	hill climbing for coeff. 2. impurity 4.480 -> 4.480
+	hill climbing for coeff. 1. impurity 4.480 -> 4.480
+	random jump. impurity 4.480 -> 0.000
+** Root: Left:[20,0] Right:[0,28]
+Unpruned decision tree written to linear.train.dt.
+accuracy = 87.50	#leaves = 2.00	max depth = 1.00
+Category 1 : accuracy = 88.89 (16/18)
+Category 2 : accuracy = 85.71 (12/14)
+
+----------------------------------------------
+# The next task is to induce a decision tree for the data 
+# in one file (linear.train), and estimate the classification
+# accuracy of that tree on the data in a second file (linear.test). 
+# Both files should have the same format - one instance per line,
+# attributes and class label listed in the same order for all instances,
+# attributes separated by blanks, tabs or commas, and missing values
+# denoted with ?.
+# The output is in "verbose" mode due to one use of the  -v option.
+   
+$ mktree -tlinear.train -Tlinear.test -v
+
+80 training examples loaded from linear.train.
+Attributes = 2, Classes = 2
+8 randomly chosen instances kept away for pruning.
+
+** Root: Left:[33,0] Right:[0,39]
+No pruning possible.
+Unpruned decision tree written to linear.train.dt.
+20 testing examples loaded from linear.test.
+accuracy = 95.00	#leaves = 2.00	max depth = 1.00
+Category 1 : accuracy = 100.00 (12/12)
+Category 2 : accuracy = 87.50 (7/8)
+
+
+# The line
+** Root: Left:[33,0] Right:[0,39]
+# means that a hyperplane is induced at the root of the decision tree,
+# and it has 33 instances of category 1 on the left, 
+#             0 instances of category 2 on the left, 
+#             0 instances of category 1 on the right and 
+#            39 instances of category 2 on the right. 
+# The "labels" of the decision tree nodes have
+# the form "Root","l","r","lr" etc. "lr" is the label of the node which
+# is the *r*ight child of the *l*eft child of the root. See sample.dt
+# for a sample decision tree.
+
+# A simple variant of the above command occurs when the data in the test
+# file is unlabeled. In this case, we want to classify that data using the
+# tree we built on linear.train. 
+
+$ mktree -tlinear.train -Tlinear.unl -u
+
+Unpruned decision tree written to linear.train.dt.
+Test instances with labels written to linear.unl.classified.
+
+----------------------------------------------
+# An obvious reason for writing the decision trees to files
+# in every run is that we want to use the trees later - for classification,
+# for graphical displays or for generating data.
+# Later on in this file, we will see ways in which we can 1) graphically
+# display decision trees and 2) generate data given a decision tree.
+# The following command illustrates how to estimate the accuracy of 
+# a decision tree (in the file linear.train.dt) on some data 
+# (in the file linear.test). 
+
+$  mktree -Dlinear.train.dt -Tlinear.test
+
+accuracy = 95.00	#leaves = 2.00	max depth = 1.00
+
+
+----------------------------------------------
+# There are four different modes in which MKTREE can be used to
+# induce a decision tree. See mktree.readme for details. The following
+# is an example of using mktree in axis parallel mode. Note that
+# the axis parallel tree is inappropriate for this data, as the correct
+# concept description is known to be a single oblique hyperplane (as 
+# was found in the first example above).
+
+$ mktree -a -tlinear.train 
+
+Pruned decision tree written to linear.train.dt.
+Unpruned decision tree written to linear.train.dt.unpruned.
+acc. on training set = 97.50	#leaves = 4	max depth = 2
+
+# Another mode in which mktree can be run is the 
+# CART-linear-combinations-mode (-K option).
+
+$ mktree -K -tlinear.train -v -v
+
+80 training examples loaded from linear.train.
+Attributes = 2, Classes = 2
+8 randomly chosen instances kept away for pruning.
+
+	CART hill climbing for coeff. 1. impurity 7.111 -> 7.111
+	CART hill climbing for coeff. 2. impurity 7.111 -> 5.950
+	CART hill climbing for coeff. 3. impurity 5.950 -> 4.508
+	CART hill climbing for coeff. 1. impurity 4.508 -> 0.000
+** Root: Left:[33,0] Right:[0,39]
+No pruning possible.
+Unpruned decision tree written to linear.train.dt.
+acc. on training set = 100.00	#leaves = 2	max depth = 1
+Category 1 : accuracy = 100.00 (38/38)
+Category 2 : accuracy = 100.00 (42/42)
+
+----------------------------------------------
+# Each run of Mktree can be customized in several ways by using the
+# command line options (and the hash defined constants in oc1.h).
+# The following illustrates a complicated use of mktree.
+# The aim is to do a 5-fold cross validation (-V5) on linear.dta, 
+# restarting from at most 30 different random hyperplanes
+# at each node (-r30), trying at most 25 random perturbations at
+# each local minimum (-m25). 20% of the training data is reserved for
+# pruning (-p0.2). The initial random seed is 200 (-s200). The order 
+# of perturbation for the hill climbing coefficient perturbation 
+# algorithm is set to Best-First (-b). The decision tree generated
+# is written to linear.howtonameit.dt. 
+
+$ mktree -V5 -tlinear.dta -r30 -m25 -p0.2 -s200 -b -Dlinear.howtonameit.dt
+
+Unpruned decision tree written to linear.howtonameit.dt.
+fold 1: acc. = 100.00	#leaves = 2	max. depth = 1
+fold 2: acc. = 95.00	#leaves = 2	max. depth = 1
+fold 3: acc. = 85.00	#leaves = 2	max. depth = 1
+fold 4: acc. = 100.00	#leaves = 2	max. depth = 1
+fold 5: acc. = 95.00	#leaves = 2	max. depth = 1
+accuracy = 95.00	#leaves = 2.00	max depth = 1.00
+
+----------------------------------------------
+# GENDATA is the second module in OC1. The main purpose of this module 
+# to generate data given a decision tree. 
+
+# In the following example, gendata generates 200 random, uniformly
+# distributed instances in the unit square, reads-in the decision tree
+# from linear.howtonameit.dt, labels the 200 points according to the 
+# decision tree, and writes the labeled points into the file linear.test2.
+# The output is in the verbose mode. There IS no very verbose mode
+# for display and gendata.
+
+$ gendata -v -Dlinear.data.dt -n200 -olinear.test2
+
+Decision tree read from linear.howtonameit.dt.
+Number of attributes = 2, Number of classes = 2
+200 instances generated.
+	Category 1 : 109 points
+	Category 2 : 91 points
+Instances written to linear.test2.
+
+# GENDATA can also generate unlabeled data (-u), or data with
+# random class labels (when no decision tree is given). 
+
+----------------------------------------------
+# We will now induce an axis parallel tree on the data generated
+# above, and use the DISPLAY program to display that tree along
+# with the oblique concept underlying the data.
+
+# First, build an axis parallel decision tree on the set linear.test2.
+# Output the decision tree to linear.ap.dt.
+
+$ mktree -tlinear.test2 -a -Dlinear.ap.dt
+
+Pruned decision tree written to linear.ap.dt.
+Unpruned decision tree written to linear.ap.dt.unpruned.
+acc. on training set = 88.50	#leaves = 3	max depth = 2
+
+# display the axis parallel tree induced above, along with the 
+# data as the PostScript file linear.ap.ps. 
+
+$ display -tlinear.test2 -Dlinear.ap.dt -o linear.ap.ps
+
+
+# Separately display the underlying concept for the data 
+# (linear.howtonameit.dt), along with the data instances, as the 
+# PostScript file linear.o.ps. 
+
+$ display -tlinear.test2 -Dlinear.howtonameit.dt -o linear.o.ps
+
+# Now, the files PostScript files can be viewed, using any standard 
+# PostScript viewer, to contrast the relative appropriateness of
+# the axis parallel and oblique trees for this data.
+
+----------------------------------------------
+# This final example illustrates the animation (-A) option for mktree.
+# See mktree.readme for details.
+
+# When a file name is specified with the -A option, mktree dumps all
+# the hyperplanes considered into that file. DISPLAY can read from
+# such a dump, to show-erase-and-show consecutive hyperplane locations
+# as an animation. I found this facility useful to understand what goes on
+# during tree induction. Hope you do too!
+
+$ mktree -Alinear.anim -tlinear.dta -r1 -v -p0 -o
+
+100 training examples loaded from linear.dta.
+Attributes = 2, Classes = 2
+All hyperplane perturbations being written to linear.anim.
+Use the Display() program for animation.
+ Restart 1: Initial Impurity = 16.063
+	hill climbing for coeff. 1. impurity 16.063 -> 15.048
+	hill climbing for coeff. 2. impurity 15.048 -> 9.375
+	hill climbing for coeff. 1. impurity 9.375 -> 6.811
+	hill climbing for coeff. 2. impurity 6.811 -> 6.210
+	hill climbing for coeff. 1. impurity 6.210 -> 6.160
+	hill climbing for coeff. 2. impurity 6.160 -> 6.160
+	hill climbing for coeff. 1. impurity 6.160 -> 6.160
+	hill climbing for coeff. 2. impurity 6.160 -> 6.160
+	hill climbing for coeff. 1. impurity 6.160 -> 6.160
+	hill climbing for coeff. 2. impurity 6.160 -> 5.889
+	hill climbing for coeff. 1. impurity 5.889 -> 5.889
+	hill climbing for coeff. 2. impurity 5.889 -> 5.889
+	hill climbing for coeff. 1. impurity 5.889 -> 5.889
+	hill climbing for coeff. 2. impurity 5.889 -> 5.889
+	hill climbing for coeff. 1. impurity 5.889 -> 5.889
+	random jump. impurity 5.889 -> 4.333
+	hill climbing for coeff. 1. impurity 4.333 -> 4.163
+	hill climbing for coeff. 2. impurity 4.163 -> 4.163
+	hill climbing for coeff. 1. impurity 4.163 -> 4.163
+	hill climbing for coeff. 2. impurity 4.163 -> 4.163
+	random jump. impurity 4.163 -> 0.000
+** Root: Left:[50,0] Right:[0,50]
+Unpruned decision tree written to linear.dta.dt.
+acc. on training set = 100.00	#leaves = 2	max depth = 1
+Category 1 : accuracy = 100.00 (50/50)
+Category 2 : accuracy = 100.00 (50/50)
+
+# Now generate a PostScript file from the animation dump generated above.
+
+$ display -tlinear.dta -Dlinear.anim -olinear.anim.ps
+
+# View the postscript file using any of your favorite viewers. (See
+# mktree.readme).
+----------------------------------------------
+----------------------------------------------
