@@ -7,7 +7,9 @@ This repo provides the source files and code used for the paper:
 + Simon Kasif
 + Steven Salzberg
 
-I created this repository because all copies of the paper (as far as I can tell) have missing figures, particularly figures 1, 2, 3, and 7. Considering the figures are not truly intrinsically valuable to the understanding of the paper, it almost seems unnecessary to do this.
+as published in *Journal of Artificial Intelligence Research, Volume 2* [(JAIR Vol.2 1994)](https://www.jair.org/index.php/jair/article/view/10121)
+
+I created this repository originally because all copies of the paper (as far as I could tell) had missing figures, particularly figures 1, 2, 3, and 7. Considering the figures are not truly intrinsically valuable to the understanding of the paper, it almost seems unnecessary to do this; but I did so anyways.
 
 Included within this repository are:
 + source files for the paper (the tex file, and packages)
@@ -27,6 +29,7 @@ The packages used here for compiling original paper are presumably the following
 
 
 ### For compiling the paper with figures
+
 To compile pdf file: `make pdf`
 
 To compile ps file: `make ps` 
@@ -36,3 +39,6 @@ To compile both pdf and ps: `make`
 ### Fair use through educational purposes
 
 If the presence of the paper is against copyright, which it shouldn't be, please submit an issue so I can best resolve it.
+
+### Acceptance :blush:
+I am happy to say that the PDF as compiled here has been accepted into the JAIR archive website!
